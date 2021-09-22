@@ -54,7 +54,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
             content_type = ''
             print("relativePath",relativePath.split('/'))
             if not relativePath.endswith("/") and '.' not in relativePath.split('/')[-1]:
-                response = self.status301Res(file_path)
+                response = self.status301Res(relativePath)
 
                 #print("redirect",file_path +"/")
 
@@ -96,13 +96,13 @@ class MyWebServer(socketserver.BaseRequestHandler):
         #self.request.sendall(response)
         self.request.sendall(bytearray(response,'utf-8'))
 
-    def status301Res(self,file_path):
+    def status301Res(self,relativePath):
         
         res = "HTTP/1.1 301 Moved Permanently\r\n"
         res += "Content-Type: text/html\r\n"
         #res += "Content-Length: 0\r\n"
         res += "Connection: close\r\n"
-        targetLocation = file_path+"/"
+        targetLocation = relativePath+"/"
         res += "Location: %s"%targetLocation
         
 
