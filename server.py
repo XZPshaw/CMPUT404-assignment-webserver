@@ -92,41 +92,68 @@ class MyWebServer(socketserver.BaseRequestHandler):
         self.request.sendall(bytearray(response,'utf-8'))
 
     def status301Res(self,relativePath):
-        
+        '''
         res = "HTTP/1.1 301 Moved Permanently\r\n"
         res += "Content-Type: text/html\r\n"
         #res += "Content-Length: 0\r\n"
         res += "Connection: close\r\n"
         targetLocation = relativePath+"/"
         res += "Location: %s"%targetLocation
-        
+        '''
 
+        res = "HTTP/1.1 301 Moved Permanently\r\n"
+        res += "Date:"
+        res += datetime.datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
+        res += "\r\n"
+        res += "Connection: close\r\n"
+        targetLocation = relativePath+"/"
+        res += "Location: %s"%targetLocation
+        res +="\r\n"
+        res += "Content-Length: 0\r\n"
+        res += "Content-Type: text/html\r\n\r\n"
+        
         return res
         
+
 
         #self.request.sendall(response)
 
 
     def status200Res(self,content_type,content_file):
-        '''
+
+        
         res = "HTTP/1.1 200 OK\r\n"
+        res += "Date:"
+        res += datetime.datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
+        res += "\r\n"
         res += "Connection: close\r\n"
-        if len(content_type)>0:
-            res += "Content-Type:%s"%content_type
+        res += "Content-Lenghth: %s\r\n"% str(len(content_file))
+        res += "Content-Type:%s"%content_type
+        res +="\r\n\r\n"
         res += content_file
-        res +="\r\n"
-        '''
-        res = "HTTP/1.1 200 OK\r\n" + "Content-Type:%s\r\n"%content_type + content_file + "\r\n"
-        #self.request.sendall(content_file)
+        res += "\r\n"
+
+        #print(res)
+                                              
+        #res = "HTTP/1.1 200 OK\r\n" + "Content-Type:%s\r\n\r\n"%content_type + content_file + "\r\n"
         return res
     def status404Res(self):
         res = "HTTP/1.1 404 Not Found\r\n"
         #res += "Content-Type: text/html\r\n"
+        res += "Date:"
+        res += datetime.datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
+        res += "\r\n"
         res += "Connection: close\r\n"
+        res += "Content-Type: text/html\r\n\r\n"
+
         return res
     def status405Res(self):
         res = "HTTP/1.1 405 Method Not Allowed\r\n"
+        res += "Date:"
+        res += datetime.datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
+        res += "\r\n"
         res += "Connection: close\r\n"
+        res += "Content-Type: text/html\r\n\r\n"
         return res
 
 
