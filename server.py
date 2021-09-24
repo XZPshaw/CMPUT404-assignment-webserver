@@ -2,6 +2,7 @@
 import socketserver
 import os
 import urllib.parse
+import datetime
 # Copyright 2013 Abram Hindle, Eddie Antonio Santos
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,35 +35,30 @@ class MyWebServer(socketserver.BaseRequestHandler):
     
     def handle(self):
         self.data = self.request.recv(1024).strip()
-        print ("Got a request of: %s\n" % self.data)
+        #print ("Got a request of: %s\n" % self.data)
 
-        self.root = os.path.abspath(".")
-        self.host = "http://127.0.0.1:8000"
         self.str_data = self.data.decode('utf-8')
-        print("decoded request:\n",self.str_data)
-        a = self.str_data.split('\n')[0].split()
-        print("decoded:",a)
+        #print("decoded request:\n",self.str_data)
 
         method = self.str_data.splitlines()[0].split()[0]
         relativePath = self.str_data.splitlines()[0].split()[1]
-        #httpVersion = self.data.spliteline()[0].decode('utf-8').split()[-1]
+
 
         base_dir = "www"
         file_path = os.path.abspath(base_dir) + relativePath
-        print(file_path)
+        #print(file_path)
         if method == 'GET' :
             content_type = ''
-            print("relativePath",relativePath.split('/'))
+            #print("relativePath",relativePath.split('/'))
             if not relativePath.endswith("/") and '.' not in relativePath.split('/')[-1]:
                 response = self.status301Res(relativePath)
 
-                #print("redirect",file_path +"/")
 
             elif relativePath[-1] == '/' and ".css" not in relativePath and ".html" not in relativePath:
                 file_path += 'index.html'
                 
                 try :
-                    print("final path:",file_path)
+                    #print("final path:",file_path)
                     target_file = open(file_path,'r')
                     content_file = target_file.read()
                 except FileNotFoundError:
@@ -73,7 +69,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                     response = self.status200Res(content_type,content_file)
             else:
                 try:
-                    print("path:",file_path)
+                    #print("path:",file_path)
                     target_file = open(file_path,'r')
                     content_file = target_file.read()
                 except FileNotFoundError:
@@ -81,10 +77,10 @@ class MyWebServer(socketserver.BaseRequestHandler):
                 else:
                     target_file.close()
                     if (".css" in relativePath.split('/')[-1]):
-                        print("css here")
+                        #print("css here")
                         content_type = 'text/css'
                     elif (".html" in relativePath.split('/')[-1]):
-                        print("html here")
+                        #print("html here")
                         content_type = 'text/html'
 
                     response = self.status200Res(content_type,content_file)
@@ -92,8 +88,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
             response = self.status405Res()
 
         #https://stackoverflow.com/questions/10114224/how-to-properly-send-http-response-with-python-using-socket-library-only/10114266
-        print(response)
-        #self.request.sendall(response)
+        #print(response)
         self.request.sendall(bytearray(response,'utf-8'))
 
     def status301Res(self,relativePath):
